@@ -158,8 +158,7 @@ proc assembleBlock*(
     someBaseFee: bool = false,
     gasLimit: Opt[GasInt] = Opt.none(GasInt)
 ): Result[AssembledBlock, string] =
-  if xp.timestamp != xp.vmState.blockCtx.timestamp:
-    xp.updateVmState()
+  xp.updateVmState()
 
   let com = xp.vmState.com
 
