@@ -435,6 +435,8 @@ proc headerFromTag*(chain: ForkedChainRef, blockTag: BlockTag): Result[Header, s
       ok(chain.safeHeader)
     of "earliest":
       chain.headerByNumber(base.BlockNumber(0))
+    of "pending":
+      ok(chain.latestHeader)
     else:
       err("Unsupported block tag " & tag)
   of bidNumber:
@@ -457,6 +459,8 @@ proc blockFromTag*(chain: ForkedChainRef, blockTag: BlockTag, noHash: bool = fal
     # wait till pruner pr is merged for tail semantics to be available, which is the appropriate way to resolve this tag
     of "earliest":
       chain.blockByNumber(base.BlockNumber(0))
+    of "pending":
+      ok(chain.latestBlock)
     else:
       err("Unsupported block tag " & tag)
   of bidNumber:
