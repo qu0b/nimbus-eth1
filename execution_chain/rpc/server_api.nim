@@ -400,16 +400,16 @@ proc setupServerAPI*(api: ServerAPIRef, server: RpcServer, am: ref AccountsManag
       return populateReceipt(receipt, receipt.cumulativeGasUsed - prevGasUsed,
                             tx, txid, header, api.com)
 
-    proc eth_estimateGas(args: TransactionArgs): Quantity {.raises: [ApplicationError, ValueError].} =
+    proc eth_estimateGas(args: TransactionArgs, blockTag: Opt[BlockTag]): Quantity {.raises: [ApplicationError, ValueError].} =
       ## Generates and returns an estimate of how much gas is necessary to allow the transaction to complete.
       ## The transaction will not be added to the blockchain. Note that the estimate may be significantly more than
       ## the amount of gas actually used by the transaction, for a variety of reasons including EVM mechanics and node performance.
       ##
       ## args: the transaction call object.
-      ## quantityTag:  integer block number, or the string "latest", "earliest" or "pending", see the default block parameter.
+      ## blockTag: integer block number, or the string "latest", "earliest" or "pending" (optional, defaults to "latest").
       ## Returns the amount of gas used.
       let
-        header = api.headerFromTag(blockId("latest")).valueOr:
+        header = api.headerFromTag(blockTag.get(blockId("latest"))).valueOr:
           raise newException(ValueError, "Block not found")
         headerHash = header.computeBlockHash
         txFrame = api.chain.txFrame(headerHash)
